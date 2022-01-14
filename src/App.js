@@ -1,56 +1,102 @@
-import './App.css';
-import React, { Component } from 'react';
-import Section from './components/Section/Section';
-import FeedbackOptions from './components/FeedbackOption/FeedbackOptions';
-import Statistics from './components/Statistics/Statistics';
+import "./App.css";
+import { useState } from "react";
+import Section from "./components/Section/Section";
+import FeedbackOptions from "./components/FeedbackOption/FeedbackOptions";
+import Statistics from "./components/Statistics/Statistics";
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export default function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const onLeaveFeedback = (event) => {
+    // eslint-disable-next-line default-case
+    switch (event.target.name) {
+      case "good":
+        return setGood((prevState) => prevState + 1);
+      case "neutral":
+        return setNeutral((prevState) => prevState + 1);
+      case "bad":
+        return setBad((prevState) => prevState + 1);
+    }
   };
 
-  onLeaveFeedback = name => {
-    this.setState(prevState => {
-      return {
-        [name]: prevState[name] + 1,
-      };
-    });
+  const total = good + neutral + bad;
+  const positivePercentage = () => {
+    return Math.round((good / total) * 100);
   };
 
-  countTotalFeedback = () => {
-    const values = Object.values(this.state);
-    return values.reduce((acc, value) => acc + value, 0);
-  };
-  countPositiveFeedbackPercentage = () => {
-    return Math.round((this.state.good / this.countTotalFeedback(this.state)) * 100);
-  };
+  return (
+    <div>
+      <Section title="Please leave feedback">
+        <FeedbackOptions leaveFeedback={onLeaveFeedback} />
+      </Section>
 
-  render() {
-    const positivePercentage = this.countPositiveFeedbackPercentage();
-    const total = this.countTotalFeedback();
-    const { good, neutral, bad } = this.state;
-    const keys = Object.keys(this.state);
-
-    return (
-      <div>
-        <Section title="Please leave feedback">
-          <FeedbackOptions options={keys} leaveFeedback={this.onLeaveFeedback} />
-        </Section>
-
-        <Section title="Statistics">
-          <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
-            total={total}
-            positivePercentage={positivePercentage}
-          />
-        </Section>
-      </div>
-    );
-  }
+      <Section title="Statistics">
+        <Statistics
+          good={good}
+          neutral={neutral}
+          bad={bad}
+          total={total}
+          positivePercentage={positivePercentage()}
+        />
+      </Section>
+    </div>
+  );
 }
 
-export default App;
+// class App extends Component {
+//   state = {
+//     good: 0,
+//     neutral: 0,
+//     bad: 0,
+//   };
+
+//   onLeaveFeedback = (name) => {
+//     this.setState((prevState) => {
+//       return {
+//         [name]: prevState[name] + 1,
+//       };
+//     });
+//   };
+
+//   countTotalFeedback = () => {
+//     const values = Object.values(this.state);
+//     return values.reduce((acc, value) => acc + value, 0);
+//   };
+//   countPositiveFeedbackPercentage = () => {
+//     return Math.round(
+//       (this.state.good / this.countTotalFeedback(this.state)) * 100
+//     );
+//   };
+
+//   render() {
+//     const positivePercentage = this.countPositiveFeedbackPercentage();
+//     const total = this.countTotalFeedback();
+//     const { good, neutral, bad } = this.state;
+//     const keys = Object.keys(this.state);
+
+//     return (
+//       <div>
+//         <Section title="Please leave feedback">
+//           <FeedbackOptions
+//             options={keys}
+//             leaveFeedback={this.onLeaveFeedback}
+//           />
+//         </Section>
+
+//         <Section title="Statistics">
+//           <Statistics
+//             good={good}
+//             neutral={neutral}
+//             bad={bad}
+//             total={total}
+//             positivePercentage={positivePercentage}
+//           />
+//         </Section>
+//       </div>
+//     );
+//   }
+// }
+
+// export default App;
